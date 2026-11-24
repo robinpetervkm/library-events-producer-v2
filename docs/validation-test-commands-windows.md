@@ -171,9 +171,7 @@ Invoke-RestMethod -Uri "http://localhost:8080/v1/library-events" `
 
 ## PUT /v1/library-events (Flow 2: UPDATE Event)
 
-> Note: These will return 404/405 until Flow 2 is implemented.
-
-### ✅ Valid Request (Expected: 200 OK when Flow 2 implemented)
+### ✅ Valid Request (Expected: 200 OK)
 
 **cmd.exe:**
 ```cmd
@@ -254,6 +252,74 @@ Invoke-RestMethod -Uri "http://localhost:8080/v1/library-events" `
   -Method PUT `
   -ContentType "application/json" `
   -Body '{"libraryEventId":1,"eventType":"UPDATE","book":null}'
+```
+
+---
+
+### ❌ Missing bookId (Expected: 400 Bad Request)
+
+**cmd.exe:**
+```cmd
+curl -X PUT "http://localhost:8080/v1/library-events" -H "Content-Type: application/json" -d "{\"libraryEventId\":1,\"eventType\":\"UPDATE\",\"book\":{\"bookId\":null,\"bookName\":\"Clean Code\",\"bookAuthor\":\"Robert Martin\"}}"
+```
+
+**PowerShell:**
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/v1/library-events" `
+  -Method PUT `
+  -ContentType "application/json" `
+  -Body '{"libraryEventId":1,"eventType":"UPDATE","book":{"bookId":null,"bookName":"Clean Code","bookAuthor":"Robert Martin"}}'
+```
+
+---
+
+### ❌ Blank bookName (Expected: 400 Bad Request)
+
+**cmd.exe:**
+```cmd
+curl -X PUT "http://localhost:8080/v1/library-events" -H "Content-Type: application/json" -d "{\"libraryEventId\":1,\"eventType\":\"UPDATE\",\"book\":{\"bookId\":101,\"bookName\":\"\",\"bookAuthor\":\"Robert Martin\"}}"
+```
+
+**PowerShell:**
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/v1/library-events" `
+  -Method PUT `
+  -ContentType "application/json" `
+  -Body '{"libraryEventId":1,"eventType":"UPDATE","book":{"bookId":101,"bookName":"","bookAuthor":"Robert Martin"}}'
+```
+
+---
+
+### ❌ Blank bookAuthor (Expected: 400 Bad Request)
+
+**cmd.exe:**
+```cmd
+curl -X PUT "http://localhost:8080/v1/library-events" -H "Content-Type: application/json" -d "{\"libraryEventId\":1,\"eventType\":\"UPDATE\",\"book\":{\"bookId\":101,\"bookName\":\"Clean Code\",\"bookAuthor\":\"   \"}}"
+```
+
+**PowerShell:**
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/v1/library-events" `
+  -Method PUT `
+  -ContentType "application/json" `
+  -Body '{"libraryEventId":1,"eventType":"UPDATE","book":{"bookId":101,"bookName":"Clean Code","bookAuthor":"   "}}'
+```
+
+---
+
+### ❌ All book fields missing (Expected: 400 Bad Request with multiple errors)
+
+**cmd.exe:**
+```cmd
+curl -X PUT "http://localhost:8080/v1/library-events" -H "Content-Type: application/json" -d "{\"libraryEventId\":1,\"eventType\":\"UPDATE\",\"book\":{\"bookId\":null,\"bookName\":\"\",\"bookAuthor\":null}}"
+```
+
+**PowerShell:**
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/v1/library-events" `
+  -Method PUT `
+  -ContentType "application/json" `
+  -Body '{"libraryEventId":1,"eventType":"UPDATE","book":{"bookId":null,"bookName":"","bookAuthor":null}}'
 ```
 
 ---

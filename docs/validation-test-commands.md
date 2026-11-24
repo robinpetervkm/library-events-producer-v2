@@ -142,9 +142,7 @@ curl -X POST "http://localhost:8080/v1/library-events" \
 
 ## PUT /v1/library-events (Flow 2: UPDATE Event)
 
-> Note: These will return 404/405 until Flow 2 is implemented.
-
-### ✅ Valid Request (Expected: 200 OK when Flow 2 implemented)
+### ✅ Valid Request (Expected: 200 OK)
 
 ```bash
 curl -X PUT "http://localhost:8080/v1/library-events" \
@@ -220,6 +218,70 @@ curl -X PUT "http://localhost:8080/v1/library-events" \
   }'
 ```
 
+### ❌ Missing bookId (Expected: 400 Bad Request)
+
+```bash
+curl -X PUT "http://localhost:8080/v1/library-events" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "libraryEventId": 1,
+    "eventType": "UPDATE",
+    "book": {
+      "bookId": null,
+      "bookName": "Clean Code",
+      "bookAuthor": "Robert Martin"
+    }
+  }'
+```
+
+### ❌ Blank bookName (Expected: 400 Bad Request)
+
+```bash
+curl -X PUT "http://localhost:8080/v1/library-events" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "libraryEventId": 1,
+    "eventType": "UPDATE",
+    "book": {
+      "bookId": 101,
+      "bookName": "",
+      "bookAuthor": "Robert Martin"
+    }
+  }'
+```
+
+### ❌ Blank bookAuthor (Expected: 400 Bad Request)
+
+```bash
+curl -X PUT "http://localhost:8080/v1/library-events" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "libraryEventId": 1,
+    "eventType": "UPDATE",
+    "book": {
+      "bookId": 101,
+      "bookName": "Clean Code",
+      "bookAuthor": "   "
+    }
+  }'
+```
+
+### ❌ All book fields missing (Expected: 400 Bad Request with multiple errors)
+
+```bash
+curl -X PUT "http://localhost:8080/v1/library-events" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "libraryEventId": 1,
+    "eventType": "UPDATE",
+    "book": {
+      "bookId": null,
+      "bookName": "",
+      "bookAuthor": null
+    }
+  }'
+```
+
 ---
 
 ## PowerShell Versions (Windows)
@@ -254,6 +316,62 @@ Invoke-RestMethod -Uri "http://localhost:8080/v1/library-events" `
   -Method POST `
   -ContentType "application/json" `
   -Body '{"libraryEventId":null,"eventType":"ADD","book":{"bookId":null,"bookName":"Clean Code","bookAuthor":"Robert Martin"}}'
+```
+
+### Valid PUT
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/v1/library-events" `
+  -Method PUT `
+  -ContentType "application/json" `
+  -Body '{"libraryEventId":1,"eventType":"UPDATE","book":{"bookId":101,"bookName":"Clean Code (Updated)","bookAuthor":"Robert Martin"}}'
+```
+
+### Invalid eventType (ADD for PUT)
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/v1/library-events" `
+  -Method PUT `
+  -ContentType "application/json" `
+  -Body '{"libraryEventId":1,"eventType":"ADD","book":{"bookId":101,"bookName":"Clean Code","bookAuthor":"Robert Martin"}}'
+```
+
+### Missing libraryEventId
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/v1/library-events" `
+  -Method PUT `
+  -ContentType "application/json" `
+  -Body '{"libraryEventId":null,"eventType":"UPDATE","book":{"bookId":101,"bookName":"Clean Code","bookAuthor":"Robert Martin"}}'
+```
+
+### Missing eventType
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/v1/library-events" `
+  -Method PUT `
+  -ContentType "application/json" `
+  -Body '{"libraryEventId":1,"book":{"bookId":101,"bookName":"Clean Code","bookAuthor":"Robert Martin"}}'
+```
+
+### Missing book
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/v1/library-events" `
+  -Method PUT `
+  -ContentType "application/json" `
+  -Body '{"libraryEventId":1,"eventType":"UPDATE","book":null}'
+```
+
+### Missing bookId
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/v1/library-events" `
+  -Method PUT `
+  -ContentType "application/json" `
+  -Body '{"libraryEventId":1,"eventType":"UPDATE","book":{"bookId":null,"bookName":"Clean Code","bookAuthor":"Robert Martin"}}'
+```
+
+### All book fields missing
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8080/v1/library-events" `
+  -Method PUT `
+  -ContentType "application/json" `
+  -Body '{"libraryEventId":1,"eventType":"UPDATE","book":{"bookId":null,"bookName":"","bookAuthor":null}}'
 ```
 
 ---

@@ -4,4 +4,5 @@ import com.learnjava.domain.LibraryEvent;
 
 public interface LibraryEventService {
     LibraryEvent publishNewLibraryEvent(LibraryEvent event);
+    LibraryEvent updateLibraryEvent(LibraryEvent event);
 }
