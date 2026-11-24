@@ -27,6 +27,8 @@ dependencies {
 	// Jackson databind for Kafka JsonSerializer (aligned with 2.20.x BOM)
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.20.2'
 
+	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+
 	// Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-kafka-test'
