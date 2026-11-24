@@ -38,7 +38,7 @@
   - Reject if eventType != UPDATE
   - Return 200 + full payload on success
 - Keep controller thin: delegate publish logic to service.
-- **Exit criteria**: controller tests for success + 400 paths.
+- **Exit criteria**: controller compiles and endpoints are mapped correctly.
 
 ---
 
@@ -51,7 +51,7 @@
   - strict event type per operation
   - required ID for update
 - Return the same event payload for controller responses.
-- **Exit criteria**: service unit tests for rule enforcement.
+- **Exit criteria**: service compiles and business rules are implemented.
 
 ---
 
@@ -60,7 +60,7 @@
 - Publish to configured topic from properties.
 - Use libraryEventId as key.
 - Add success/failure callbacks with structured logs (libraryEventId, eventType, bookId).
-- **Exit criteria**: producer unit test with mocked KafkaTemplate.
+- **Exit criteria**: producer compiles and publishes to configured topic.
 
 ---
 
@@ -72,7 +72,7 @@
   - map validation + business errors -> 400
   - map Kafka/internal errors -> 500
 - Add consistent error payload (timestamp, status, message, path, optional traceId).
-- **Exit criteria**: error contract tests pass for both endpoints.
+- **Exit criteria**: exception handler compiles and maps errors to responses.
 
 ---
 
@@ -88,19 +88,9 @@
 ---
 
 ## Layer 7 - Testing Strategy (Must-Have)
-- **Unit tests**
-  - validation logic for models
-  - service business rules
-  - controller behavior with mocked service
-- **Integration tests**
-  - REST + Kafka flow using embedded Kafka or Testcontainers
-  - verify message lands on topic with expected payload/key
-- **Negative tests**
-  - wrong event type by method
-  - missing book or fields
-  - missing libraryEventId for PUT
-  - Kafka failure path -> 500
-- **Exit criteria**: green tests and acceptable coverage on core logic.
+- Testing is handled in a separate section/course
+- Dependencies for testing (Testcontainers, spring-kafka-test, etc.) are configured in Layer 0
+- **Exit criteria**: test dependencies configured and available
 
 ---
 
