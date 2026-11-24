@@ -27,40 +27,58 @@
 
 ---
 
-## Layer 2 - API Contract Layer (Controller)
+## Flow 1: POST /v1/library-events (ADD Event) + Kafka Producer
+
+### Layer 2a - Controller (POST / ADD)
 - Create LibraryEventsController in controller.
 - Implement POST /v1/library-events:
   - Accept payload
   - Reject if eventType != ADD
   - Return 201 + full payload on success
-- Implement PUT /v1/library-events:
-  - Require libraryEventId
-  - Reject if eventType != UPDATE
-  - Return 200 + full payload on success
 - Keep controller thin: delegate publish logic to service.
-- **Exit criteria**: controller compiles and endpoints are mapped correctly.
+- **Exit criteria**: POST endpoint compiles and mapped correctly.
 
----
-
-## Layer 3 - Service Layer (Business Rules)
+### Layer 3a - Service (ADD Business Rules)
 - Create LibraryEventService interface + implementation.
-- Methods:
-  - publishNewLibraryEvent(LibraryEvent event)
-  - updateLibraryEvent(LibraryEvent event)
-- Centralize business checks here too (defense in depth):
-  - strict event type per operation
-  - required ID for update
+- Method: publishNewLibraryEvent(LibraryEvent event)
+- Business checks:
+  - eventType must be ADD
+  - book is required and valid
 - Return the same event payload for controller responses.
-- **Exit criteria**: service compiles and business rules are implemented.
+- **Exit criteria**: service compiles and ADD business rules implemented.
 
----
-
-## Layer 4 - Kafka Producer Layer
-- Create LibraryEventProducer using KafkaTemplate<Long, LibraryEvent> (or String key strategy if preferred).
+### Layer 4a - Kafka Producer (ADD Flow)
+- Create LibraryEventProducer using KafkaTemplate<Long, LibraryEvent>.
 - Publish to configured topic from properties.
 - Use libraryEventId as key.
 - Add success/failure callbacks with structured logs (libraryEventId, eventType, bookId).
-- **Exit criteria**: producer compiles and publishes to configured topic.
+- **Exit criteria**: producer compiles and publishes ADD events to configured topic.
+
+---
+
+## Flow 2: PUT /v1/library-events (UPDATE Event) + Kafka Producer
+
+### Layer 2b - Controller (PUT / UPDATE)
+- Add PUT /v1/library-events to LibraryEventsController:
+  - Require libraryEventId
+  - Reject if eventType != UPDATE
+  - Return 200 + full payload on success
+- Delegate to service.
+- **Exit criteria**: PUT endpoint compiles and mapped correctly.
+
+### Layer 3b - Service (UPDATE Business Rules)
+- Add updateLibraryEvent(LibraryEvent event) to LibraryEventService.
+- Business checks:
+  - eventType must be UPDATE
+  - libraryEventId is required
+  - book is required and valid
+- Return the same event payload for controller responses.
+- **Exit criteria**: service compiles and UPDATE business rules implemented.
+
+### Layer 4b - Kafka Producer (UPDATE Flow)
+- Reuse LibraryEventProducer for UPDATE events.
+- Same topic, key strategy, and callbacks.
+- **Exit criteria**: producer publishes UPDATE events to configured topic.
 
 ---
 
