@@ -18,14 +18,24 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-kafka'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	// Core
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-	//developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-kafka'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	// Jackson databind for Kafka JsonSerializer (aligned with 2.20.x BOM)
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.20.2'
+
+	// Test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-kafka-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Testcontainers for integration tests
+	testImplementation 'org.testcontainers:junit-jupiter:1.20.1'
+	testImplementation 'org.testcontainers:kafka:1.20.1'
 }
 
 tasks.named('test') {
