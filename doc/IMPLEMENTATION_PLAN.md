@@ -23,7 +23,7 @@
   - book required
   - book fields required/non-empty
   - libraryEventId required for update flow (enforced in API/service)
-- **Exit criteria**: unit tests pass for model validation scenarios.
+- **Exit criteria**: models compile and validation annotations are correctly applied.
 
 ---
 
