@@ -1,5 +1,39 @@
 # Validation Test Commands - Windows
 
+## Table of Contents
+
+1. [POST /v1/library-events (Flow 1: ADD Event)](#post-v1library-events-flow-1-add-event)
+   - [✅ Valid Request (Expected: 201 Created)](#-valid-request-expected-201-created)
+   - [❌ Invalid eventType = UPDATE (Expected: 400 Bad Request)](#-invalid-eventtype--update-expected-400-bad-request)
+   - [❌ Missing eventType (Expected: 400 Bad Request)](#-missing-eventtype-expected-400-bad-request)
+   - [❌ Missing book (Expected: 400 Bad Request)](#-missing-book-expected-400-bad-request)
+   - [❌ Missing bookId (Expected: 400 Bad Request)](#-missing-bookid-expected-400-bad-request)
+   - [❌ Blank bookName (Expected: 400 Bad Request)](#-blank-bookname-expected-400-bad-request)
+   - [❌ Blank bookAuthor (Expected: 400 Bad Request)](#-blank-bookauthor-expected-400-bad-request)
+   - [❌ All book fields missing (Expected: 400 Bad Request with multiple errors)](#-all-book-fields-missing-expected-400-bad-request-with-multiple-errors)
+   - [❌ Empty JSON body (Expected: 400 Bad Request)](#-empty-json-body-expected-400-bad-request)
+
+2. [PUT /v1/library-events (Flow 2: UPDATE Event)](#put-v1library-events-flow-2-update-event)
+   - [✅ Valid Request (Expected: 200 OK)](#-valid-request-expected-200-ok)
+   - [❌ Invalid eventType = ADD (Expected: 400 Bad Request)](#-invalid-eventtype--add-expected-400-bad-request)
+   - [❌ Missing libraryEventId (Expected: 400 Bad Request)](#-missing-libraryeventid-expected-400-bad-request)
+   - [❌ Missing eventType (Expected: 400 Bad Request)](#-missing-eventtype-expected-400-bad-request-1)
+   - [❌ Missing book (Expected: 400 Bad Request)](#-missing-book-expected-400-bad-request-1)
+   - [❌ Missing bookId (Expected: 400 Bad Request)](#-missing-bookid-expected-400-bad-request-1)
+   - [❌ Blank bookName (Expected: 400 Bad Request)](#-blank-bookname-expected-400-bad-request-1)
+   - [❌ Blank bookAuthor (Expected: 400 Bad Request)](#-blank-bookauthor-expected-400-bad-request-1)
+   - [❌ All book fields missing (Expected: 400 Bad Request with multiple errors)](#-all-book-fields-missing-expected-400-bad-request-with-multiple-errors-1)
+
+3. [Quick Reference: Windows JSON Escaping Rules](#quick-reference-windows-json-escaping-rules)
+
+4. [Expected Error Response Format](#expected-error-response-format)
+   - [Bean Validation Errors (400)](#bean-validation-errors-400)
+   - [Controller-Level Validation (400)](#controller-level-validation-400)
+
+5. [Running the Tests](#running-the-tests)
+
+---
+
 Base URL: `http://localhost:8080/v1/library-events`
 
 > **Note**: These commands work in **Command Prompt (cmd.exe)** and **PowerShell**.
