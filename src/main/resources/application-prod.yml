@@ -1,0 +1,12 @@
+server:
+  port: 8080
+
+spring:
+  kafka:
+    bootstrap-servers: prod-kafka-broker1:9092,prod-kafka-broker2:9092
+
+library:
+  events:
+    topic: library-events
+    producer:
+      send-mode: sync

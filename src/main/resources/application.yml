@@ -4,8 +4,9 @@ server:
 spring:
   application:
     name: library-events-producer
+  profiles:
+    active: dev
   kafka:
-    bootstrap-servers: localhost:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.LongSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -15,13 +16,6 @@ spring:
       # value-serializer: org.apache.kafka.common.serialization.StringSerializer
       # properties:
       #   spring.json.trusted.packages: "com.learnjava.domain"
-
-library:
-  events:
-    topic: library-events
-    producer:
-      # Set to "sync" for synchronous (blocking) send, "async" for asynchronous (non-blocking)
-      send-mode: async
 
 management:
   endpoints:
