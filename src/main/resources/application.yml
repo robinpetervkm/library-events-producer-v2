@@ -19,6 +19,9 @@ spring:
 library:
   events:
     topic: library-events
+    producer:
+      # Set to "sync" for synchronous (blocking) send, "async" for asynchronous (non-blocking)
+      send-mode: async
 
 management:
   endpoints:
