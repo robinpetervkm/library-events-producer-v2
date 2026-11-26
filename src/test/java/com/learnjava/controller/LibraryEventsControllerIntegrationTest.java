@@ -5,8 +5,6 @@ import com.learnjava.domain.LibraryEvent;
 import com.learnjava.domain.LibraryEventType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.junit.jupiter.api.BeforeEach;
