@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,7 +28,6 @@ import org.testcontainers.utility.DockerImageName;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -67,16 +66,29 @@ class LibraryEventsControllerIntegrationTest {
         LibraryEvent libraryEvent = new LibraryEvent(null, LibraryEventType.ADD, book);
 
         // Set up a consumer to verify the message was published to Kafka
+        // Using custom deserializer instead of deprecated JsonDeserializer
+        var valueDeserializer = new Deserializer<LibraryEvent>() {
+            private final ObjectMapper mapper = new ObjectMapper();
+            @Override
+            public LibraryEvent deserialize(String topic, byte[] data) {
+                try {
+                    return mapper.readValue(data, LibraryEvent.class);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to deserialize LibraryEvent", e);
+                }
+            }
+        };
+
         Map<String, Object> consumerProps = Map.of(
                 ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaContainer.getBootstrapServers(),
                 ConsumerConfig.GROUP_ID_CONFIG, "test-group-" + System.currentTimeMillis(),
                 ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest",
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class,
-                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class,
-                JsonDeserializer.TRUSTED_PACKAGES, "com.learnjava.domain"
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer.getClass()
         );
 
-        try (var consumer = new DefaultKafkaConsumerFactory<>(consumerProps).createConsumer()) {
+        var consumerFactory = new DefaultKafkaConsumerFactory<>(consumerProps, new LongDeserializer(), valueDeserializer);
+        try (var consumer = consumerFactory.createConsumer()) {
             consumer.subscribe(Collections.singletonList("library-events"));
 
             // When: POST the library event
